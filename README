@@ -1,0 +1,18 @@
+docker-firefoxdriver
+~~~~~~~~~~~~~~~~~~~~
+
+Usage:
+
+  $ docker run --net=host -t wakaba/docker-firefoxdriver:stable /cd
+
+... then access <http://localhost:9516/wd/hub/{path}>.
+
+Docker Hub: <https://registry.hub.docker.com/u/wakaba/docker-firefoxdriver/>
+
+
+Firefox Driver <https://code.google.com/p/selenium/wiki/FirefoxDriver>
+The WebDriver Wire Protocol
+<https://code.google.com/p/selenium/wiki/JsonWireProtocol>
+
+
+Chrome: <https://github.com/wakaba/docker-chromedriver>
