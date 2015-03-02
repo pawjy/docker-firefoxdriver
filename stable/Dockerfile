@@ -11,7 +11,7 @@ RUN wget --no-check-certificate https://www.google.com/get/noto/pkgs/NotoSansCJK
 
 ## <http://www.seleniumhq.org/download/>
 #RUN wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
-RUN wget `wget -O - https://raw.githubusercontent.com/wakaba/docker-firefoxdriver/master/selenium-url`
+RUN wget `wget -O - https://raw.githubusercontent.com/wakaba/docker-firefoxdriver/master/stable/selenium-url`
 
 RUN wget -m -np https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest/linux-x86_64/en-US/ && \
     tar jvxf /ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest/linux-x86_64/en-US/firefox-*.tar.bz2 && \
