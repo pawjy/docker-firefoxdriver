@@ -13,7 +13,7 @@ RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted
 #RUN wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
 RUN wget `wget -O - https://raw.githubusercontent.com/wakaba/docker-firefoxdriver/master/stable/selenium-url`
 
-RUN wget -m -np https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/staging/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
+RUN wget -m -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/staging/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
     tar jvxf /ftp.mozilla.org/pub/mozilla.org/firefox/releases/*/linux-x86_64/en-US/firefox-*.tar.bz2 && \
     rm -fr /ftp.mozilla.org
 
