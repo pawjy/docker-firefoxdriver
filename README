@@ -3,7 +3,7 @@ docker-firefoxdriver
 
 Usage:
 
-  $ docker run --net=host -t wakaba/docker-firefoxdriver:stable /fx
+  $ docker run --net=host -t quay.io/wakaba/firefoxdriver:stable /fx
 
 ... then access <http://localhost:9516/wd/hub/{path}>.
 
