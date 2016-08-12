@@ -26,10 +26,10 @@ RUN echo "#!/bin/bash" > /runfx && \
 
 RUN echo "#!/bin/bash" > /fx && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx && \
-    echo 'java -jar selenium-server-standalone-*.jar -port 9516 -Dwebdriver.firefox.bin=/runfx' >> /fx && \
+    echo 'java -jar selenium-server-standalone-*.jar -port 9516 -D webdriver.firefox.bin=/runfx' >> /fx && \
     chmod u+x /fx
 
 RUN echo "#!/bin/bash" > /fx-port && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx-port && \
-    echo 'java -jar selenium-server-standalone-*.jar -port $1 -Dwebdriver.firefox.bin=/runfx' >> /fx-port && \
+    echo 'java -jar selenium-server-standalone-*.jar -port $1 -D webdriver.firefox.bin=/runfx' >> /fx-port && \
     chmod u+x /fx-port
