@@ -1,6 +1,6 @@
 FROM debian:sid
 
-RUN apt-get update && apt-get install -y wget bzip2 unzip xvfb openjdk-7-jre fonts-noto && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget bzip2 unzip xvfb default-jre fonts-noto && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted.zip && \
     unzip NotoSansCJKjp-hinted.zip && \
