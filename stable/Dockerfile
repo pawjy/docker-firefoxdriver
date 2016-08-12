@@ -16,7 +16,7 @@ RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted
 ## <http://selenium-release.storage.googleapis.com/index.html>
 RUN wget `wget -O - https://raw.githubusercontent.com/wakaba/docker-firefoxdriver/master/stable/selenium-url`
 
-RUN wget -m -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/staging/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
+RUN wget -m -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/version/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
     tar jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/en-US/firefox-*.tar.bz2 && \
     rm -fr /ftp.mozilla.org
 
