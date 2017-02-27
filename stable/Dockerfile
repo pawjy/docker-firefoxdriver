@@ -12,24 +12,22 @@ RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted
     fc-cache && \
     rm NotoSansCJKjp-hinted.zip
 
-## <http://www.seleniumhq.org/download/>
-## <http://selenium-release.storage.googleapis.com/index.html>
-RUN wget `wget -O - https://raw.githubusercontent.com/wakaba/docker-firefoxdriver/master/stable/selenium-url`
+# geckodriver <https://github.com/mozilla/geckodriver>
+RUN wget -np https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz && \
+    tar xvf geckodriver-*-linux64.tar.gz && \
+    rm geckodriver-*-linux64.tar.gz && \
+    chmod u+x /geckodriver
 
 RUN wget -m -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
     tar jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/en-US/firefox-*.tar.bz2 && \
     rm -fr /ftp.mozilla.org
 
-RUN echo "#!/bin/bash" > /runfx && \
-    echo 'DISPLAY=:0 /firefox/firefox "$*"' >> /runfx && \
-    chmod u+x /runfx
-
 RUN echo "#!/bin/bash" > /fx && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx && \
-    echo 'java -jar selenium-server-standalone-*.jar -port 9516 -Dwebdriver.firefox.bin=/runfx' >> /fx && \
+    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port 9516 --binary /firefox/firefox' >> /fx && \
     chmod u+x /fx
 
 RUN echo "#!/bin/bash" > /fx-port && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx-port && \
-    echo 'java -jar selenium-server-standalone-*.jar -port $1 -Dwebdriver.firefox.bin=/runfx' >> /fx-port && \
+    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port $1 --binary /firefox/firefox' >> /fx-port && \
     chmod u+x /fx-port
