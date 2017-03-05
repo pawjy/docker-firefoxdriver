@@ -13,7 +13,8 @@ RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted
     rm NotoSansCJKjp-hinted.zip
 
 # geckodriver <https://github.com/mozilla/geckodriver>
-RUN wget -np https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz && \
+RUN version=`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/geckodriver-latest.txt` && \
+    wget -np https://github.com/mozilla/geckodriver/releases/download/$version/geckodriver-$version-linux64.tar.gz && \
     tar xvf geckodriver-*-linux64.tar.gz && \
     rm geckodriver-*-linux64.tar.gz && \
     chmod u+x /geckodriver
