@@ -1,8 +1,8 @@
 FROM debian:sid
 
 RUN (apt-get update || apt-get update) && \
-    (apt-get install -y wget bzip2 unzip xvfb default-jre fonts-noto || \
-     apt-get install -y wget bzip2 unzip xvfb default-jre fonts-noto) && \
+    (apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto || \
+     apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto) && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted.zip && \
@@ -19,7 +19,14 @@ RUN version=`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/
     rm geckodriver-*-linux64.tar.gz && \
     chmod u+x /geckodriver
 
-RUN wget -m -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
+# Firefox
+# To install dependencies of Firefox, firefox package is installed and then be purged.
+RUN (apt-get update || apt-get update) && \
+    (apt-get -y --no-install-recommends install firefox dbus || \
+     apt-get -y --no-install-recommends install firefox dbus) && \
+    apt-get -y purge firefox && \
+    rm -rf /var/lib/apt/lists/* && \
+    wget -m -nv -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/firefox-latest.txt`/linux-x86_64/en-US/ && \
     tar jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/en-US/firefox-*.tar.bz2 && \
     rm -fr /ftp.mozilla.org
 
