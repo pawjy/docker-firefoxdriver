@@ -39,3 +39,5 @@ RUN echo "#!/bin/bash" > /fx-port && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx-port && \
     echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port $1 --binary /firefox/firefox' >> /fx-port && \
     chmod u+x /fx-port
+
+CMD ["/fx"]
