@@ -16,7 +16,6 @@ test:
     - cd perl-web-driver-client && TEST_WD_URL=http://localhost:9516 WEBUA_DEBUG=2 make test
     - docker logs server
     - docker kill server
-    - docker rm server
 
 deployment:
   docker:
