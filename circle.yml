@@ -9,11 +9,12 @@ dependencies:
     - docker build -t quay.io/wakaba/firefoxdriver:stable stable
     - git clone https://github.com/manakai/perl-web-driver-client
     - cd perl-web-driver-client && make test-deps
+    - ip route | awk '/docker0/ { print $NF }' > docker0-ip.txt; cat docker0-ip.txt
 test:
   override:
-    - docker run --name server -d -p 5511:9516 quay.io/wakaba/firefoxdriver:stable /fx; sleep 10
+    - docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx && sleep 10
     - curl -f http://localhost:5511/status
-    - cd perl-web-driver-client && TEST_WD_URL=http://localhost:5511 WEBUA_DEBUG=2 make test
+    - cd perl-web-driver-client && TEST_WD_URL=http://localhost:5511 WEBUA_DEBUG=2 TEST_SERVER_LISTEN_HOST=0.0.0.0 TEST_SERVER_HOSTNAME=dockerhost make test
     - docker logs server
 
 deployment:
