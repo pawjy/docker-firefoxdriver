@@ -1,36 +1,48 @@
-machine:
-  services:
-    - docker
-dependencies:
-  override:
-    - git config --global user.email "temp@circleci.test"
-    - git config --global user.name "CircleCI"
-    - docker info
-    - docker build -t quay.io/wakaba/firefoxdriver:stable stable
-    - git clone https://github.com/manakai/perl-web-driver-client
-    - cd perl-web-driver-client && make test-deps
-    - ip route | awk '/docker0/ { print $NF }' > docker0-ip.txt; cat docker0-ip.txt
-test:
-  override:
-    - docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
-    - while [ ! curl -f http://localhost:5511/status ]; do sleep 1; done
-    - cd perl-web-driver-client && TEST_WD_URL=http://localhost:5511 WEBUA_DEBUG=2 TEST_SERVER_LISTEN_HOST=0.0.0.0 TEST_SERVER_HOSTNAME=dockerhost make test
-    - docker logs server
-    - docker kill server
-
-deployment:
-  docker:
-    branch: master
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
-      - docker push quay.io/wakaba/firefoxdriver:stable
-
-  nightly:
-    branch: nightly
-    commands:
-      - curl -f -s -S --request POST --header "Authorization:token $GITHUB_ACCESS_TOKEN" --header "Content-Type:application/json" --data-binary "{\"base\":\"master\",\"head\":\"`git rev-parse HEAD`\",\"commit_message\":\"auto-merge nightly into master\"}" "https://api.github.com/repos/wakaba/docker-firefoxdriver/merges"
-
-  staging:
-    branch: staging
-    commands:
-      - curl -f -s -S --request POST --header "Authorization:token $GITHUB_ACCESS_TOKEN" --header "Content-Type:application/json" --data-binary "{\"base\":\"master\",\"head\":\"`git rev-parse HEAD`\",\"commit_message\":\"auto-merge staging into master\"}" "https://api.github.com/repos/wakaba/docker-firefoxdriver/merges"
+{
+   "dependencies" : {
+      "override" : [
+         "git clone https://github.com/manakai/perl-web-driver-client",
+         "cd perl-web-driver-client && make test-deps",
+         "ip route | awk '/docker0/ { print $NF }' > docker0-ip.txt; cat docker0-ip.txt",
+         "docker info",
+         "docker build -t quay.io/wakaba/firefoxdriver:stable stable"
+      ]
+   },
+   "deployment" : {
+      "master" : {
+         "branch" : "master",
+         "commands" : [
+            "docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io",
+            "docker push quay.io/wakaba/firefoxdriver:stable && curl -sSLf $BWALL_URL -X POST"
+         ]
+      },
+      "nightly" : {
+         "branch" : "nightly",
+         "commands" : [
+            "git rev-parse HEAD > head.txt",
+            "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022"
+         ]
+      },
+      "staging" : {
+         "branch" : "staging",
+         "commands" : [
+            "git rev-parse HEAD > head.txt",
+            "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022"
+         ]
+      }
+   },
+   "machine" : {
+      "services" : [
+         "docker"
+      ]
+   },
+   "test" : {
+      "override" : [
+         "docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx",
+         "while [ ! curl -f http://localhost:5511/status ]; do sleep 1; done",
+         "cd perl-web-driver-client && TEST_WD_URL=http://localhost:5511 WEBUA_DEBUG=2 TEST_SERVER_LISTEN_HOST=0.0.0.0 TEST_SERVER_HOSTNAME=dockerhost make test",
+         "docker logs server",
+         "docker kill server"
+      ]
+   }
+}
