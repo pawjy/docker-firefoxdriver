@@ -7,6 +7,10 @@ docker-firefoxdriver
 
 ... then access <http://localhost:9516/{path}>.
 
+* Supported locales
+
+en-US, ja
+
 * See also
 
 geckodriver <https://github.com/mozilla/geckodriver>
