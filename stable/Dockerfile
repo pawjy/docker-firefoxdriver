@@ -1,5 +1,4 @@
-#FROM debian:sid
-FROM debian
+FROM debian:sid
 
 RUN (apt-get update || apt-get update) && \
     (apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto || \
