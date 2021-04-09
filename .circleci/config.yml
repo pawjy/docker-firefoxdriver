@@ -16,6 +16,16 @@
             },
             {
                "run" : {
+                  "command" : "docker version"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "ip route"
+               }
+            },
+            {
+               "run" : {
                   "command" : "git clone https://github.com/manakai/perl-web-driver-client"
                }
             },
