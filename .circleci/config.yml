@@ -26,7 +26,7 @@
             },
             {
                "run" : {
-                  "command" : "docker run -d -it debian bash"
+                  "command" : "docker run -d -it quay.io/wakaba/base:stable bash"
                }
             },
             {
@@ -194,7 +194,7 @@
          "triggers" : [
             {
                "schedule" : {
-                  "cron" : "42 2 * * *",
+                  "cron" : "2 3 * * *",
                   "filters" : {
                      "branches" : {
                         "only" : [
