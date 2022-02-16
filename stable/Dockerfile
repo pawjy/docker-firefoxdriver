@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM quay.io/wakaba/base:stable
 
 RUN (apt-get update || apt-get update) && \
     (apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto || \
