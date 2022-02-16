@@ -1,4 +1,4 @@
-FROM debian:sid
+FROM debian:stable-slim
 
 RUN (apt-get update || apt-get update) && \
     (apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto || \
@@ -22,9 +22,9 @@ RUN version=`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/
 # Firefox
 # To install dependencies of Firefox, firefox package is installed and then be purged.
 RUN (apt-get update || apt-get update) && \
-    (apt-get -y --no-install-recommends install firefox dbus || \
-     apt-get -y --no-install-recommends install firefox dbus) && \
-    apt-get -y purge firefox && \
+    (apt-get -y --no-install-recommends install firefox-esr dbus || \
+     apt-get -y --no-install-recommends install firefox-esr dbus) && \
+    apt-get -y purge firefox-esr && \
     rm -rf /var/lib/apt/lists/* && \
     wget -m -nv -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/firefox-latest.txt`/linux-x86_64/ja/ && \
     tar jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/ja/firefox-*.tar.bz2 && \

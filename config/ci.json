@@ -15,6 +15,7 @@
       "docker logs server",
       "docker kill server"
     ],
-    "merger": true
+    "merger": true,
+    "gaa": true
   }
 }
