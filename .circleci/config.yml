@@ -148,6 +148,25 @@
    },
    "version" : 2,
    "workflows" : {
+      "autobuild" : {
+         "jobs" : [
+            "build"
+         ],
+         "triggers" : [
+            {
+               "schedule" : {
+                  "cron" : "25 15 * * *",
+                  "filters" : {
+                     "branches" : {
+                        "only" : [
+                           "master"
+                        ]
+                     }
+                  }
+               }
+            }
+         ]
+      },
       "build" : {
          "jobs" : [
             {
@@ -197,7 +216,7 @@
          "triggers" : [
             {
                "schedule" : {
-                  "cron" : "2 3 * * *",
+                  "cron" : "25 3 * * *",
                   "filters" : {
                      "branches" : {
                         "only" : [
