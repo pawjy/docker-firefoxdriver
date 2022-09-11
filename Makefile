@@ -12,8 +12,7 @@ test-circleci:
 	cd perl-web-driver-client && make test-deps
 
 	docker run -d -it quay.io/wakaba/base:stable bash
-	sleep 10
-	ip route | awk '/docker0/ { print $NF }' > docker0-ip.txt
+	ip route | awk '/docker0/ { print $$NF }' > docker0-ip.txt
 	cat docker0-ip.txt
 
 	docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
