@@ -16,26 +16,6 @@
             },
             {
                "run" : {
-                  "command" : "git clone https://github.com/manakai/perl-web-driver-client"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "cd perl-web-driver-client && make test-deps"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "docker run -d -it quay.io/wakaba/base:stable bash"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "ip route | awk '/docker0/ { print $NF }' > docker0-ip.txt; cat docker0-ip.txt"
-               }
-            },
-            {
-               "run" : {
                   "command" : "docker info"
                }
             },
@@ -45,43 +25,59 @@
                }
             },
             {
-               "run" : {
-                  "command" : "docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "while [ ! curl -f http://localhost:5511/status ]; do sleep 1; done"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "cd perl-web-driver-client && TEST_WD_URL=http://localhost:5511 WEBUA_DEBUG=2 TEST_SERVER_LISTEN_HOST=0.0.0.0 TEST_SERVER_HOSTNAME=dockerhost make test"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "docker logs server"
-               }
-            },
-            {
-               "run" : {
-                  "command" : "docker kill server"
-               }
-            },
-            {
                "store_artifacts" : {
                   "path" : "/tmp/circle-artifacts/build"
                }
             },
             {
-               "deploy" : {
-                  "command" : "if [ \u0022${CIRCLE_BRANCH}\u0022 == 'master' ]; then\u000Atrue\u000Adocker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io || docker login -u $DOCKER_USER -p $DOCKER_PASS quay.io\u000Afi"
+               "run" : {
+                  "command" : "mkdir -p .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "docker save -o .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/stable.tar quay.io/wakaba/firefoxdriver:stable"
+               }
+            },
+            {
+               "persist_to_workspace" : {
+                  "paths" : [
+                     ".ciconfigtemp"
+                  ],
+                  "root" : "./"
+               }
+            }
+         ]
+      },
+      "deploy_master" : {
+         "machine" : {
+            "image" : "ubuntu-2004:202101-01"
+         },
+         "steps" : [
+            "checkout",
+            {
+               "attach_workspace" : {
+                  "at" : "./"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "docker load -i .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/stable.tar"
                }
             },
             {
                "deploy" : {
-                  "command" : "if [ \u0022${CIRCLE_BRANCH}\u0022 == 'master' ]; then\u000Atrue\u000Adocker push quay.io/wakaba/firefoxdriver:stable && curl -sSLf $BWALL_URL -X POST\u000Afi"
+                  "command" : "docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io || docker login -u $DOCKER_USER -p $DOCKER_PASS quay.io"
+               }
+            },
+            {
+               "deploy" : {
+                  "command" : "docker push quay.io/wakaba/firefoxdriver:stable"
+               }
+            },
+            {
+               "deploy" : {
+                  "command" : "curl -sSf $BWALLER_URL | BWALL_GROUP=docker BWALL_NAME=quay.io/wakaba/firefoxdriver:stable bash"
                }
             }
          ]
@@ -93,8 +89,18 @@
          "steps" : [
             "checkout",
             {
+               "attach_workspace" : {
+                  "at" : "./"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "docker load -i .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/stable.tar"
+               }
+            },
+            {
                "deploy" : {
-                  "command" : "git rev-parse HEAD > head.txt\u000Acurl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022 && curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.$CIRCLE_BRANCH/$CIRCLE_PROJECT_USERNAME%2F$CIRCLE_PROJECT_REPONAME -X POST"
+                  "command" : "git rev-parse HEAD > head.txt\u000Acurl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022\u000Acurl -sSf $BWALLER_URL | BWALL_GROUP=merger.$CIRCLE_BRANCH BWALL_NAME=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME bash"
                }
             }
          ]
@@ -106,8 +112,18 @@
          "steps" : [
             "checkout",
             {
+               "attach_workspace" : {
+                  "at" : "./"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "docker load -i .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/stable.tar"
+               }
+            },
+            {
                "deploy" : {
-                  "command" : "git rev-parse HEAD > head.txt\u000Acurl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022 && curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.$CIRCLE_BRANCH/$CIRCLE_PROJECT_USERNAME%2F$CIRCLE_PROJECT_REPONAME -X POST"
+                  "command" : "git rev-parse HEAD > head.txt\u000Acurl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022`cat head.txt`\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $CIRCLE_BRANCH into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/merges\u0022\u000Acurl -sSf $BWALLER_URL | BWALL_GROUP=merger.$CIRCLE_BRANCH BWALL_NAME=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME bash"
                }
             }
          ]
@@ -144,6 +160,42 @@
                }
             }
          ]
+      },
+      "test" : {
+         "environment" : {
+            "CIRCLE_ARTIFACTS" : "/tmp/circle-artifacts/test"
+         },
+         "machine" : {
+            "image" : "ubuntu-2004:202101-01"
+         },
+         "steps" : [
+            "checkout",
+            {
+               "attach_workspace" : {
+                  "at" : "./"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "docker load -i .ciconfigtemp/dockerimages/quay.io/wakaba/firefoxdriver/stable.tar"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "mkdir -p $CIRCLE_ARTIFACTS"
+               }
+            },
+            {
+               "run" : {
+                  "command" : "make test-circleci"
+               }
+            },
+            {
+               "store_artifacts" : {
+                  "path" : "/tmp/circle-artifacts/test"
+               }
+            }
+         ]
       }
    },
    "version" : 2,
@@ -155,7 +207,7 @@
          "triggers" : [
             {
                "schedule" : {
-                  "cron" : "25 15 * * *",
+                  "cron" : "58 3 * * *",
                   "filters" : {
                      "branches" : {
                         "only" : [
@@ -174,6 +226,31 @@
                }
             },
             {
+               "test" : {
+                  "requires" : [
+                     "build"
+                  ]
+               }
+            },
+            {
+               "deploy_master" : {
+                  "context" : [
+                     "deploy-context"
+                  ],
+                  "filters" : {
+                     "branches" : {
+                        "only" : [
+                           "master"
+                        ]
+                     }
+                  },
+                  "requires" : [
+                     "build",
+                     "test"
+                  ]
+               }
+            },
+            {
                "deploy_nightly" : {
                   "context" : [
                      "deploy-context"
@@ -186,7 +263,8 @@
                      }
                   },
                   "requires" : [
-                     "build"
+                     "build",
+                     "test"
                   ]
                }
             },
@@ -203,7 +281,8 @@
                      }
                   },
                   "requires" : [
-                     "build"
+                     "build",
+                     "test"
                   ]
                }
             }
@@ -216,7 +295,7 @@
          "triggers" : [
             {
                "schedule" : {
-                  "cron" : "25 3 * * *",
+                  "cron" : "58 15 * * *",
                   "filters" : {
                      "branches" : {
                         "only" : [
