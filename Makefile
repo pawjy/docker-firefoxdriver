@@ -15,7 +15,7 @@ test-circleci:
 	ip route | awk '/docker0/ { print $$NF }' > docker0-ip.txt
 	cat docker0-ip.txt
 
-EXXX
+	#XXX
 	docker run --name server -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
 
 	docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
