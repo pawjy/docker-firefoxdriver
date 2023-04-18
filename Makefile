@@ -16,7 +16,8 @@ test-circleci:
 	cat docker0-ip.txt
 
 	#XXX
-	docker run --name server -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
+	docker run -it quay.io/wakaba/firefoxdriver:stable cat /fx
+	docker run --name server -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` -e WD_ALLOW_HOSTS=localhost quay.io/wakaba/firefoxdriver:stable /fx
 
 	docker run --name server -d -p 5511:9516 --add-host=dockerhost:`cat docker0-ip.txt` quay.io/wakaba/firefoxdriver:stable /fx
 	while [ ! curl -f http://localhost:5511/status ]; do sleep 1; done
