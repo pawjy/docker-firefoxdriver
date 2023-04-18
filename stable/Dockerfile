@@ -31,13 +31,15 @@ RUN (apt-get update || apt-get update) && \
     rm -fr /ftp.mozilla.org
 
 RUN echo "#!/bin/bash" > /fx && \
+    echo 'hosts=${WD_ALLOW_HOSTS:-localhost:9516}' >> /fx && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx && \
-    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port 9516 --allow-hosts "localhost:9516 ${WD_ALLOW_HOSTS}" --binary /firefox/firefox' >> /fx && \
+    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port 9516 --allow-hosts $hosts --binary /firefox/firefox' >> /fx && \
     chmod u+x /fx
 
 RUN echo "#!/bin/bash" > /fx-port && \
+    echo 'hosts=${WD_ALLOW_HOSTS:-localhost:$1}' >> /fx && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx-port && \
-    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port $1 --allow-hosts "localhost:$1 ${WD_ALLOW_HOSTS}" --binary /firefox/firefox' >> /fx-port && \
+    echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port $1 --allow-hosts $hosts --binary /firefox/firefox' >> /fx-port && \
     chmod u+x /fx-port
 
 CMD ["/fx"]
