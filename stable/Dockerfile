@@ -37,7 +37,7 @@ RUN echo "#!/bin/bash" > /fx && \
     chmod u+x /fx
 
 RUN echo "#!/bin/bash" > /fx-port && \
-    echo 'hosts=${WD_ALLOW_HOSTS:-localhost}' >> /fx && \
+    echo 'hosts=${WD_ALLOW_HOSTS:-localhost}' >> /fx-port && \
     echo 'Xvfb :0 -screen 0 1024x768x24 &' >> /fx-port && \
     echo 'DISPLAY=:0 /geckodriver --host 0.0.0.0 --port $1 --allow-hosts $hosts --binary /firefox/firefox' >> /fx-port && \
     chmod u+x /fx-port
