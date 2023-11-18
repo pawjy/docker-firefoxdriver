@@ -1,8 +1,11 @@
 {
-  "circleci": {
-    "docker-build": {"name":"quay.io/wakaba/firefoxdriver:stable", "path":"stable"},
+  "github": {
+    "build": [
+      {"docker_build":"quay.io/wakaba/firefoxdriver:stable", "path":"stable"}
+    ],
     "tests": [
-      "make test-circleci"
+      "make test-circleci",
+      {"docker_push":"quay.io/wakaba/firefoxdriver:stable"}
     ],
     "merger": true,
     "gaa": true,
