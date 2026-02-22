@@ -1,7 +1,7 @@
 FROM quay.io/wakaba/base:stable
 
 RUN apt-get update && \
-    apt-get install -y wget bzip2 unzip xvfb fontconfig \
+    apt-get install -y wget xz-utils unzip xvfb fontconfig \
     fonts-noto fonts-liberation fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
 
