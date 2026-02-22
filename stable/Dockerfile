@@ -20,7 +20,7 @@ RUN (apt-get update || apt-get update) && \
     apt-get -y purge firefox-esr && \
     rm -rf /var/lib/apt/lists/* && \
     wget -m -nv -np https://ftp.mozilla.org/pub/firefox/releases/`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/firefox-latest.txt`/linux-x86_64/ja/ && \
-    tar jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/ja/firefox-*.tar.bz2 && \
+    tar Jvxf /ftp.mozilla.org/pub/firefox/releases/*/linux-x86_64/ja/firefox-*.tar.xz && \
     rm -fr /ftp.mozilla.org
 
 RUN echo "#!/bin/bash" > /fx && \
