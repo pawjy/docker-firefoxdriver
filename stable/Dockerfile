@@ -1,16 +1,9 @@
 FROM quay.io/wakaba/base:stable
 
-RUN (apt-get update || apt-get update) && \
-    (apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto || \
-     apt-get install -y wget bzip2 unzip xvfb fontconfig fonts-noto) && \
+RUN apt-get update && \
+    apt-get install -y wget bzip2 unzip xvfb fontconfig \
+    fonts-noto fonts-liberation fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
-
-RUN wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKjp-hinted.zip && \
-    unzip NotoSansCJKjp-hinted.zip && \
-    mkdir -p usr/share/fonts/truetype/noto && \
-    mv *.otf usr/share/fonts/truetype/noto/ && \
-    fc-cache && \
-    rm NotoSansCJKjp-hinted.zip
 
 # geckodriver <https://github.com/mozilla/geckodriver>
 RUN version=`wget -O - https://raw.githubusercontent.com/manakai/data-web-impls/master/data/geckodriver-latest.txt` && \
