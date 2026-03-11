@@ -98,7 +98,7 @@
                "run" : "mkdir -p $CIRCLE_ARTIFACTS"
             },
             {
-               "run" : "docker build -t quay\u005C.io\u005C/wakaba\u005C/firefoxdriver\u005C:stable stable"
+               "run" : "docker build --cache-from quay\u005C.io\u005C/wakaba\u005C/firefoxdriver\u005C:stable -t quay\u005C.io\u005C/wakaba\u005C/firefoxdriver\u005C:stable stable"
             },
             {
                "run" : "make test-circleci"
